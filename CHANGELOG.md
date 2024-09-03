@@ -1,5 +1,11 @@
 # copy-name-manager
 
+## 0.0.4
+
+### Patch Changes
+
+- 961391a: doc: add explain
+
 ## 0.0.3
 
 ### Patch Changes
