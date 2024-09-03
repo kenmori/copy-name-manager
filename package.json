@@ -1,0 +1,41 @@
+{
+  "name": "copy-name-manager",
+  "version": "0.0.1",
+  "description": "A versatile JavaScript/TypeScript library for managing and generating sequentially named copies with customizable naming patterns. Perfect for applications requiring dynamic duplication and renaming.",
+  "keywords": [
+    "copy",
+    "duplicate",
+    "naming",
+    "name-manager",
+    "auto-increment",
+    "sequential-naming",
+    "typescript",
+    "javascript",
+    "file-management",
+    "utility",
+    "library"
+  ],
+  "homepage": "https://github.com/kenmori/copy-name-manager",
+  "bugs": {
+    "url": "https://github.com/kenmori/copy-name-manager/issues"
+  },
+  "author": "Kenji Morita <kenjimoritata@gmail.com> (https://kenjimorita.jp)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kenmori/copy-name-manager.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "ci": "npm run build",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "prettier": "3.3.3",
+    "typescript": "5.5.4"
+  }
+}
