@@ -29,13 +29,23 @@
   ],
   "type": "module",
   "license": "MIT",
+  "main": "dist/index.js",
   "scripts": {
+    "ci": "npm run build && npm run check-format && npm run check-exports && npm run lint && npm run test",
     "build": "tsc",
-    "ci": "npm run build",
-    "format": "prettier --write ."
+    "dev": "vitest",
+    "test": "vitest run",
+    "format": "prettier --write .",
+    "check-format": "prettier --check .",
+    "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm",
+    "local-release": "changeset version && changeset publish",
+    "prepublishOnly": "npm run ci"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "0.15.4",
+    "@changesets/cli": "^2.27.7",
     "prettier": "3.3.3",
-    "typescript": "5.5.4"
+    "typescript": "5.5.4",
+    "vitest": "^2.0.5"
   }
 }
