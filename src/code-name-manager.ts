@@ -52,7 +52,7 @@ class CopyManager {
 
       const baseName = removedCopy.replace(/のコピー\(\d+\)$/, "").replace(/のコピー$/, "");
       const match = removedCopy.match(/のコピー\((\d+)\)$/);
-      const copyNumber = match ? parseInt(match[1], 10) : 1;
+      const copyNumber = match ? parseInt(match[1] || "", 10) : 1;
 
       if (this.copyNumbers[baseName]) {
         this.copyNumbers[baseName]?.delete(copyNumber);
