@@ -21,15 +21,15 @@ describe("CopyManager", () => {
     expect(copyManager.getCopies()).toEqual(["Document", "Documentのコピー"]);
   });
 
-  it('should add a copy with "のコピー2" when two copies with the same name exist', () => {
+  it('should add a copy with "のコピー(2)" when "のコピー" already exists', () => {
     copyManager.addCopy("Document");
     copyManager.addCopy("Document");
     const copyName = copyManager.addCopy("Document");
-    expect(copyName).toBe("Documentのコピー2");
+    expect(copyName).toBe("Documentのコピー(2)");
     expect(copyManager.getCopies()).toEqual([
       "Document",
       "Documentのコピー",
-      "Documentのコピー2",
+      "Documentのコピー(2)",
     ]);
   });
 
@@ -55,7 +55,7 @@ describe("CopyManager", () => {
     expect(copyName).toBe("Documentのコピー");
     expect(copyManager.getCopies()).toEqual([
       "Document",
-      "Documentのコピー2",
+      "Documentのコピー(2)",
       "Documentのコピー",
     ]);
   });
@@ -67,36 +67,34 @@ describe("CopyManager", () => {
     expect(copyManager.getCopies()).toEqual([
       "Document",
       "Documentのコピー",
-      "Documentのコピー2",
+      "Documentのコピー(2)",
     ]);
   });
-  it.todo(
-    "should create the same copies after deleting all and recreating",
-    () => {
-      // 最初に3つのコピーを作成
-      copyManager.addCopy("Document");
-      copyManager.addCopy("Document");
-      copyManager.addCopy("Document");
 
-      // すべてのコピーを削除
-      copyManager.removeCopy("Document");
-      copyManager.removeCopy("Documentのコピー");
-      copyManager.removeCopy("Documentのコピー2");
+  it("should create the same copies after deleting all and recreating", () => {
+    // 最初に3つのコピーを作成
+    copyManager.addCopy("Document");
+    copyManager.addCopy("Document");
+    copyManager.addCopy("Document");
 
-      // 再度3つのコピーを作成
-      const copyName1 = copyManager.addCopy("Document");
-      const copyName2 = copyManager.addCopy("Document");
-      const copyName3 = copyManager.addCopy("Document");
+    // すべてのコピーを削除
+    copyManager.removeCopy("Document");
+    copyManager.removeCopy("Documentのコピー");
+    copyManager.removeCopy("Documentのコピー(2)");
 
-      // 同じ名前になるか確認
-      expect(copyName1).toBe("Document");
-      expect(copyName2).toBe("Documentのコピー");
-      expect(copyName3).toBe("Documentのコピー2");
-      expect(copyManager.getCopies()).toEqual([
-        "Document",
-        "Documentのコピー",
-        "Documentのコピー2",
-      ]);
-    },
-  );
+    // 再度3つのコピーを作成
+    const copyName1 = copyManager.addCopy("Document");
+    const copyName2 = copyManager.addCopy("Document");
+    const copyName3 = copyManager.addCopy("Document");
+
+    // 同じ名前になるか確認
+    expect(copyName1).toBe("Document");
+    expect(copyName2).toBe("Documentのコピー");
+    expect(copyName3).toBe("Documentのコピー(2)");
+    expect(copyManager.getCopies()).toEqual([
+      "Document",
+      "Documentのコピー",
+      "Documentのコピー(2)",
+    ]);
+  });
 });
