@@ -14,7 +14,7 @@ describe("CopyNameManager", () => {
     expect(copyNameManager.getCopies()).toEqual(["ファイル名"]);
   });
 
-  it("should return 'ファイル名のコピー' when 'ファイル名' is already present", () => {
+  it("should return ‘copy filename’ when ‘filename’ is already present", () => {
     copyNameManager.addCopy("ファイル名");
     const copyName = copyNameManager.addCopy("ファイル名");
     expect(copyName).toBe("ファイル名のコピー");
@@ -24,7 +24,7 @@ describe("CopyNameManager", () => {
     ]);
   });
 
-  it("should return 'ファイル名のコピー2' when 'ファイル名のコピー' is already present", () => {
+  it("should return ‘filename copy 2’ when ‘filename copy’ is already present", () => {
     copyNameManager.addCopy("ファイル名");
     copyNameManager.addCopy("ファイル名");
     const copyName = copyNameManager.addCopy("ファイル名のコピー");
@@ -36,7 +36,7 @@ describe("CopyNameManager", () => {
     ]);
   });
 
-  it("should return 'ファイル名のコピー3' when 'ファイル名のコピー2' is already present", () => {
+  it("should return ‘filename copy 3’ when ‘filename copy 2’ is already present", () => {
     copyNameManager.addCopy("ファイル名");
     copyNameManager.addCopy("ファイル名");
     copyNameManager.addCopy("ファイル名のコピー");

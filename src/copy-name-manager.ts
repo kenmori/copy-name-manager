@@ -25,13 +25,13 @@ class CopyNameManager {
 
     let newCopyName: string;
 
-    // 「ファイル名」が既に存在するか確認
+    // Check if the ‘filename’ already exists.
     if (this.copies.includes(name)) {
       // 使用可能な番号を探す
       let copyNumber = this.findAvailableCopyNumber(baseName, 1);
       newCopyName = `${baseName}${this.copySuffix}${copyNumber > 1 ? copyNumber : ""}`;
 
-      // 新しいコピー名が既に存在するか確認
+      // Check if the new copy name already exists
       while (this.copies.includes(newCopyName)) {
         copyNumber = this.findAvailableCopyNumber(baseName, copyNumber + 1);
         newCopyName = `${baseName}${this.copySuffix}${copyNumber > 1 ? copyNumber : ""}`;
@@ -39,7 +39,7 @@ class CopyNameManager {
 
       this.copyNumbers[baseName]?.add(copyNumber);
     } else {
-      // 初めてのコピーの場合はそのままの名前を使用
+      // If this is your first copy, use the name as it is.
       newCopyName = name;
     }
 
@@ -47,7 +47,7 @@ class CopyNameManager {
     return newCopyName;
   }
 
-  // 再帰的に使用可能なコピー番号を探す
+  // Find recursively available copy numbers.
   private findAvailableCopyNumber(
     baseName: string,
     copyNumber: number,
