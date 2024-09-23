@@ -2,9 +2,13 @@ class CopyManager {
   private copyNumbers: Record<string, Set<number>>;
   private copies: string[];
 
-  constructor() {
+  constructor(initialNames: string[] = []) {
     this.copyNumbers = {};
     this.copies = [];
+
+    initialNames.forEach((name) => {
+      this.addCopy(name);
+    });
   }
 
   addCopy(name: string): string {
@@ -16,19 +20,21 @@ class CopyManager {
 
     if (this.copies.includes(name)) {
       // 名前が既に存在する場合、「のコピー」形式で新しいコピー名を作成
-      let nextCopyNumber = 0;
-      while (this.copyNumbers[name]?.has(nextCopyNumber)) {
-        nextCopyNumber++;
+      if (!this.copyNumbers[name]?.has(1)) {
+        newCopyName = `${name}のコピー`;
+        this.copyNumbers[name]?.add(1); // 最初のコピーを予約
+      } else {
+        // 「のコピー」が存在する場合、次の番号付きコピーを作成
+        let nextCopyNumber = 2; // (2) からスタート
+        while (this.copyNumbers[name]?.has(nextCopyNumber)) {
+          nextCopyNumber++;
+        }
+        newCopyName = `${name}のコピー(${nextCopyNumber})`;
+        this.copyNumbers[name]?.add(nextCopyNumber);
       }
-
-      newCopyName = `${name}のコピー${
-        nextCopyNumber > 1 ? nextCopyNumber : ""
-      }`;
-      this.copyNumbers[name]?.add(nextCopyNumber);
     } else {
       // 名前がまだ使われていない場合、そのままの名前を使用
       newCopyName = name;
-      this.copyNumbers[name]?.add(1); // 次に「のコピー」が作成されるように予約
     }
 
     this.copies.push(newCopyName);
@@ -43,9 +49,10 @@ class CopyManager {
       if (!removedCopy) {
         throw new Error("removedCopy is empty");
       }
-      const baseName = removedCopy.replace(/のコピー[0-9]*$/, "");
-      const copyNumber =
-        parseInt(removedCopy.replace(`${baseName}のコピー`, "")) || 1;
+
+      const baseName = removedCopy.replace(/のコピー\(\d+\)$/, "").replace(/のコピー$/, "");
+      const match = removedCopy.match(/のコピー\((\d+)\)$/);
+      const copyNumber = match ? parseInt(match[1], 10) : 1;
 
       if (this.copyNumbers[baseName]) {
         this.copyNumbers[baseName]?.delete(copyNumber);
