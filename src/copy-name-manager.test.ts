@@ -124,4 +124,23 @@ describe("CopyNameManager", () => {
       "ファイル名のコピー5",
     ]);
   });
+  it("should return correct name after all initial copies are removed and new one is added", () => {
+    const copyNameManager = new CopyNameManager([
+      "ファイル名",
+      "ファイル名のコピー",
+      "ファイル名のコピー2",
+    ]);
+
+    copyNameManager.removeCopy("ファイル名");
+    copyNameManager.removeCopy("ファイル名のコピー");
+    copyNameManager.removeCopy("ファイル名のコピー2");
+
+    const newCopyName = copyNameManager.addCopy("ファイル名");
+    expect(newCopyName).toBe("ファイル名");
+    const newCopyName2 = copyNameManager.addCopy("ファイル名");
+    expect(copyNameManager.getCopies()).toEqual([
+      "ファイル名",
+      "ファイル名のコピー",
+    ]);
+  });
 });
