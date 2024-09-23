@@ -1,5 +1,11 @@
 # copy-name-manager
 
+## 0.1.0
+
+### Minor Changes
+
+- 1069b4b: fix give init file names
+
 ## 0.0.5
 
 ### Patch Changes
