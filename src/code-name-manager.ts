@@ -50,7 +50,9 @@ class CopyManager {
         throw new Error("removedCopy is empty");
       }
 
-      const baseName = removedCopy.replace(/のコピー\(\d+\)$/, "").replace(/のコピー$/, "");
+      const baseName = removedCopy
+        .replace(/のコピー\(\d+\)$/, "")
+        .replace(/のコピー$/, "");
       const match = removedCopy.match(/のコピー\((\d+)\)$/);
       const copyNumber = match ? parseInt(match[1] || "", 10) : 1;
 
