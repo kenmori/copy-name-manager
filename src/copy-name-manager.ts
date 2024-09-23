@@ -64,8 +64,9 @@ class CopyNameManager {
     if (index > -1) {
       this.copies.splice(index, 1);
       const escapedSuffix = this.escapeRegExp(this.copySuffix);
-      const baseName = name.replace(new RegExp(`${escapedSuffix}(\\d*)$`), "");
-      const match = name.match(new RegExp(`${escapedSuffix}(\\d*)$`));
+      const regex = new RegExp(`${escapedSuffix}(\\d*)$`);
+      const baseName = name.replace(regex, "");
+      const match = name.match(regex);
       if (match) {
         const copyNumber = parseInt(match[1] || "", 10);
         this.copyNumbers[baseName]?.delete(copyNumber);
