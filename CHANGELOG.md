@@ -1,5 +1,11 @@
 # copy-name-manager
 
+## 0.2.1
+
+### Patch Changes
+
+- 6d30c14: add test, refactor language and few
+
 ## 0.2.0
 
 ### Minor Changes
