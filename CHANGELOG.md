@@ -1,5 +1,11 @@
 # copy-name-manager
 
+## 0.3.0
+
+### Minor Changes
+
+- 37d0f1d: change Class name
+
 ## 0.1.0
 
 ### Minor Changes
