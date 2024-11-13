@@ -18,7 +18,10 @@ describe("CopyNameManager", () => {
     copyNameManager.addCopy("Document");
     const copyName = copyNameManager.addCopy("Document");
     expect(copyName).toBe("Documentのコピー");
-    expect(copyNameManager.getCopies()).toEqual(["Document", "Documentのコピー"]);
+    expect(copyNameManager.getCopies()).toEqual([
+      "Document",
+      "Documentのコピー",
+    ]);
   });
 
   it('should add a copy with "のコピー(2)" when "のコピー" already exists', () => {
