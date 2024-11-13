@@ -1,4 +1,4 @@
-class CopyManager {
+class CopyNameManager {
   private copyNumbers: Record<string, Set<number>>;
   private copies: string[];
 
@@ -70,4 +70,4 @@ class CopyManager {
   }
 }
 
-export { CopyManager };
+export { CopyNameManager };
