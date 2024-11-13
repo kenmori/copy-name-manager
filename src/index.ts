@@ -1,1 +1,1 @@
-export { CopyManager } from "./code-name-manager.js";
+export { CopyNameManager } from "./code-name-manager.js";
