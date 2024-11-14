@@ -13,7 +13,7 @@
 You can install the library via npm:
 
 ```bash
-npm install copy-name-manager
+npm install @kenmori/copy-name-manager
 ```
 
 ## Usage
@@ -88,9 +88,9 @@ export default CopyNameManagerComponent;
 
 To better understand how CopyNameManager works, here's a visual example:
 
-<img src="https://kenjimorita.jp/wp-content/uploads/2024/09/dev-1.gif" alt="npm library 'copy-name-manager'" class="size-large wp-image-25961" />
+<img src="https://kenjimorita.jp/wp-content/uploads/2024/11/dev.gif" alt="" width="1101" height="718" class="size-full wp-image-26085" />
 
-- [stackblitz](https://stackblitz.com/edit/vitejs-vite-g79p9r?embed=1&file=src%2FExample.tsx)
+- [stackblitz](https://stackblitz.com/edit/vitejs-vite-fu6pe5?embed=1&file=package.json&view=preview)
 
 ## API
 
