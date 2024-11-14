@@ -1,19 +1,26 @@
 class CopyNameManager {
   private copyNumbers: Record<string, Set<number>>;
   private copies: string[];
+  private copySuffix: string;
 
-  constructor(initialNames: string[] = []) {
+  constructor(initialNames: string[] = [], copySuffix = "のコピー") {
     this.copyNumbers = {};
     this.copies = [];
+    this.copySuffix = copySuffix;
 
     initialNames.forEach((name) => {
       this.addCopy(name);
     });
   }
+  private escapeRegExp(string: string) {
+    return string.replace(/[.*+\-?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
+  }
 
   addCopy(name: string): string {
-    if (!this.copyNumbers[name]) {
-      this.copyNumbers[name] = new Set<number>();
+    const escapedSuffix = this.escapeRegExp(this.copySuffix);
+    const baseName = name.replace(new RegExp(`${escapedSuffix}(\\d*)$`), "");
+    if (!this.copyNumbers[baseName]) {
+      this.copyNumbers[baseName] = new Set<number>();
     }
 
     let newCopyName: string;
@@ -21,7 +28,7 @@ class CopyNameManager {
     if (this.copies.includes(name)) {
       // 名前が既に存在する場合、「のコピー」形式で新しいコピー名を作成
       if (!this.copyNumbers[name]?.has(1)) {
-        newCopyName = `${name}のコピー`;
+        newCopyName = `${name}${this.copySuffix}`;
         this.copyNumbers[name]?.add(1); // 最初のコピーを予約
       } else {
         // 「のコピー」が存在する場合、次の番号付きコピーを作成
@@ -29,7 +36,7 @@ class CopyNameManager {
         while (this.copyNumbers[name]?.has(nextCopyNumber)) {
           nextCopyNumber++;
         }
-        newCopyName = `${name}のコピー(${nextCopyNumber})`;
+        newCopyName = `${name}${this.copySuffix}(${nextCopyNumber})`;
         this.copyNumbers[name]?.add(nextCopyNumber);
       }
     } else {
@@ -42,7 +49,7 @@ class CopyNameManager {
     let copyNumber = 1;
     while (this.copies.includes(newCopyName)) {
       copyNumber++;
-      newCopyName = `${name}のコピー(${copyNumber})`;
+      newCopyName = `${name}${this.copySuffix}(${copyNumber})`;
     }
 
     this.copies.push(newCopyName);
@@ -75,6 +82,9 @@ class CopyNameManager {
 
   getCopies(): string[] {
     return this.copies;
+  }
+  getCopySuffix(): string {
+    return this.copySuffix;
   }
 }
 
