@@ -122,7 +122,7 @@ describe("CopyNameManager", () => {
     const copyNameManager = new CopyNameManager();
     expect(copyNameManager.getCopySuffix()).toBe("のコピー");
   });
-  it('should set the copy suffix correctly', () => {
+  it("should set the copy suffix correctly", () => {
     const copyNameManager = new CopyNameManager([], "のコピー");
     expect(copyNameManager.getCopySuffix()).toBe("のコピー");
   });
