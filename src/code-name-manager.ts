@@ -37,6 +37,14 @@ class CopyNameManager {
       newCopyName = name;
     }
 
+    // 新しいコピー名が既存のコピーと競合していないか確認
+    // Check if the new copy name conflicts with existing copies
+    let copyNumber = 1;
+    while (this.copies.includes(newCopyName)) {
+      copyNumber++;
+      newCopyName = `${name}のコピー(${copyNumber})`;
+    }
+
     this.copies.push(newCopyName);
     return newCopyName;
   }
