@@ -19,6 +19,7 @@ class CopyNameManager {
     let newCopyName: string;
 
     if (this.copies.includes(name)) {
+      // 名前が既に存在する場合、「のコピー」形式で新しいコピー名を作成
       if (!this.copyNumbers[name]?.has(1)) {
         newCopyName = `${name}のコピー`;
         this.copyNumbers[name]?.add(1); // 最初のコピーを予約
@@ -32,6 +33,7 @@ class CopyNameManager {
         this.copyNumbers[name]?.add(nextCopyNumber);
       }
     } else {
+      // 名前がまだ使われていない場合、そのままの名前を使用
       newCopyName = name;
     }
 
