@@ -1,14 +1,14 @@
 class CopyNameManager {
-  private copyNumbers: { [key: string]: Set<number> };
+  private copyNumbers: Record<string, Set<number>>;
   private copies: string[];
   private copySuffix: string;
 
-  constructor(initialNames?: string[], copySuffix = "のコピー") {
+  constructor(initialNames: string[] = [], copySuffix = "のコピー") {
     this.copyNumbers = {};
     this.copies = [];
     this.copySuffix = copySuffix;
 
-    initialNames?.forEach((name) => {
+    initialNames.forEach((name) => {
       this.addCopy(name);
     });
   }
@@ -25,52 +25,59 @@ class CopyNameManager {
 
     let newCopyName: string;
 
-    // 「ファイル名」が既に存在するか確認
     if (this.copies.includes(name)) {
-      // 使用可能な番号を探す
-      let copyNumber = this.findAvailableCopyNumber(baseName, 1);
-      newCopyName = `${baseName}${this.copySuffix}${copyNumber > 1 ? copyNumber : ""}`;
-
-      // 新しいコピー名が既に存在するか確認
-      while (this.copies.includes(newCopyName)) {
-        copyNumber = this.findAvailableCopyNumber(baseName, copyNumber + 1);
-        newCopyName = `${baseName}${this.copySuffix}${copyNumber > 1 ? copyNumber : ""}`;
+      // 名前が既に存在する場合、「のコピー」形式で新しいコピー名を作成
+      if (!this.copyNumbers[name]?.has(1)) {
+        newCopyName = `${name}${this.copySuffix}`;
+        this.copyNumbers[name]?.add(1); // 最初のコピーを予約
+      } else {
+        // 「のコピー」が存在する場合、次の番号付きコピーを作成
+        let nextCopyNumber = 2; // (2) からスタート
+        while (this.copyNumbers[name]?.has(nextCopyNumber)) {
+          nextCopyNumber++;
+        }
+        newCopyName = `${name}${this.copySuffix}(${nextCopyNumber})`;
+        this.copyNumbers[name]?.add(nextCopyNumber);
       }
-
-      this.copyNumbers[baseName]?.add(copyNumber);
     } else {
-      // 初めてのコピーの場合はそのままの名前を使用
+      // 名前がまだ使われていない場合、そのままの名前を使用
       newCopyName = name;
+    }
+
+    // 新しいコピー名が既存のコピーと競合していないか確認
+    // Check if the new copy name conflicts with existing copies
+    let copyNumber = 1;
+    while (this.copies.includes(newCopyName)) {
+      copyNumber++;
+      newCopyName = `${name}${this.copySuffix}(${copyNumber})`;
     }
 
     this.copies.push(newCopyName);
     return newCopyName;
   }
 
-  // 再帰的に使用可能なコピー番号を探す
-  private findAvailableCopyNumber(
-    baseName: string,
-    copyNumber: number,
-  ): number {
-    if (!this.copyNumbers[baseName]?.has(copyNumber)) {
-      return copyNumber;
-    } else {
-      return this.findAvailableCopyNumber(baseName, copyNumber + 1);
-    }
-  }
-
-  removeCopy(name: string): void {
-    const index = this.copies.indexOf(name);
+  removeCopy(name: string): boolean {
+    const index = this.copies.findIndex((copy) => copy === name);
     if (index > -1) {
-      this.copies.splice(index, 1);
-      const escapedSuffix = this.escapeRegExp(this.copySuffix);
-      const baseName = name.replace(new RegExp(`${escapedSuffix}(\\d*)$`), "");
-      const match = name.match(new RegExp(`${escapedSuffix}(\\d*)$`));
-      if (match) {
-        const copyNumber = parseInt(match[1] || "", 10);
+      const [removedCopy] = this.copies.splice(index, 1);
+
+      if (!removedCopy) {
+        throw new Error("removedCopy is empty");
+      }
+
+      const baseName = removedCopy
+        .replace(/のコピー\(\d+\)$/, "")
+        .replace(/のコピー$/, "");
+      const match = removedCopy.match(/のコピー\((\d+)\)$/);
+      const copyNumber = match ? parseInt(match[1] || "", 10) : 1;
+
+      if (this.copyNumbers[baseName]) {
         this.copyNumbers[baseName]?.delete(copyNumber);
       }
+
+      return true;
     }
+    return false;
   }
 
   getCopies(): string[] {

@@ -1,6 +1,6 @@
 {
   "name": "@kenmori/copy-name-manager",
-  "version": "0.2.0",
+  "version": "0.3.1",
   "description": "A versatile JavaScript/TypeScript library for managing and generating sequentially named copies with customizable naming patterns. Perfect for applications requiring dynamic duplication and renaming.",
   "keywords": [
     "copy",
@@ -44,9 +44,9 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "0.15.4",
-    "@changesets/cli": "^2.27.7",
+    "@changesets/cli": "2.27.7",
     "prettier": "3.3.3",
-    "typescript": "5.5.4",
-    "vitest": "^2.0.5"
+    "typescript": "5.6.3",
+    "vitest": "2.0.5"
   }
 }

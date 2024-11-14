@@ -1,10 +1,10 @@
 # copy-name-manager
 
-## 0.2.0
+## 0.3.0
 
 ### Minor Changes
 
-- a3a8c02: - copySuffixのバグを修正とcopySuffixを渡せるように修正
+- 37d0f1d: change Class name
 
 ## 0.1.0
 
