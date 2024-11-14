@@ -117,4 +117,13 @@ describe("CopyNameManager", () => {
       "Documentのコピー(2)",
     ]);
   });
+
+  it('should default to "のコピー" if no copy suffix is provided', () => {
+    const copyNameManager = new CopyNameManager();
+    expect(copyNameManager.getCopySuffix()).toBe("のコピー");
+  });
+  it('should set the copy suffix correctly', () => {
+    const copyNameManager = new CopyNameManager([], "のコピー");
+    expect(copyNameManager.getCopySuffix()).toBe("のコピー");
+  });
 });

@@ -83,6 +83,9 @@ class CopyNameManager {
   getCopies(): string[] {
     return this.copies;
   }
+  getCopySuffix(): string {
+    return this.copySuffix;
+  }
 }
 
 export { CopyNameManager };
