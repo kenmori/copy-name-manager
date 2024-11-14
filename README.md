@@ -90,7 +90,7 @@ To better understand how CopyNameManager works, here's a visual example:
 
 <img src="https://kenjimorita.jp/wp-content/uploads/2024/09/dev-1.gif" alt="npm library 'copy-name-manager'" class="size-large wp-image-25961" />
 
-- [stackblitz](https://stackblitz.com/edit/vitejs-vite-jsiwp7?embed=1&file=README.md&view=preview)
+- [stackblitz](https://stackblitz.com/edit/vitejs-vite-g79p9r?embed=1&file=src%2FExample.tsx)
 
 ## API
 

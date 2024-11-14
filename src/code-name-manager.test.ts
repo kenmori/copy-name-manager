@@ -53,6 +53,11 @@ describe("CopyNameManager", () => {
     copyNameManager.addCopy("Document");
     copyNameManager.addCopy("Document");
     copyNameManager.addCopy("Document");
+    expect(copyNameManager.getCopies()).toEqual([
+      "Document",
+      "Documentのコピー",
+      "Documentのコピー(2)",
+    ]);
     copyNameManager.removeCopy("Documentのコピー");
     const copyName = copyNameManager.addCopy("Document");
     expect(copyName).toBe("Documentのコピー");
@@ -70,6 +75,18 @@ describe("CopyNameManager", () => {
     expect(copyNameManager.getCopies()).toEqual([
       "Document",
       "Documentのコピー",
+      "Documentのコピー(2)",
+    ]);
+  });
+
+  it("should return all copies even if remove origin name", () => {
+    copyNameManager = new CopyNameManager(["Document", "Documentのコピー"]);
+    copyNameManager.removeCopy("Document");
+    copyNameManager.addCopy("Document");
+    copyNameManager.addCopy("Document");
+    expect(copyNameManager.getCopies()).toEqual([
+      "Documentのコピー",
+      "Document",
       "Documentのコピー(2)",
     ]);
   });
