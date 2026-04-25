@@ -65,10 +65,13 @@ class CopyNameManager {
         throw new Error("removedCopy is empty");
       }
 
+      const escapedSuffix = this.escapeRegExp(this.copySuffix);
       const baseName = removedCopy
-        .replace(/のコピー\(\d+\)$/, "")
-        .replace(/のコピー$/, "");
-      const match = removedCopy.match(/のコピー\((\d+)\)$/);
+        .replace(new RegExp(`${escapedSuffix}\\(\\d+\\)$`), "")
+        .replace(new RegExp(`${escapedSuffix}$`), "");
+      const match = removedCopy.match(
+        new RegExp(`${escapedSuffix}\\((\\d+)\\)$`),
+      );
       const copyNumber = match ? parseInt(match[1] || "", 10) : 1;
 
       if (this.copyNumbers[baseName]) {
