@@ -1,5 +1,11 @@
 # copy-name-manager
 
+## 1.2.1
+
+### Patch Changes
+
+- 6517e8a: fix: sort copies when reusing deleted copy number
+
 ## 1.2.0
 
 ### Minor Changes
