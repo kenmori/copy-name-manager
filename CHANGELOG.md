@@ -1,5 +1,15 @@
 # copy-name-manager
 
+## 1.1.0
+
+### Minor Changes
+
+- 812881f: add copySuffix
+
+### Patch Changes
+
+- 1b86cce: conflicts check when addCopy
+
 ## 0.3.0
 
 ### Minor Changes
