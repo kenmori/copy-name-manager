@@ -6,6 +6,7 @@
 
 - Automatically generates unique copy names in the format `name`, `nameのコピー`, `nameのコピー(2)`, etc.
 - Handles deletion of copies and reuses deleted copy numbers when new copies are added.
+- Supports renaming copies while preserving their position.
 - Supports custom copy suffixes.
 - Provides easy integration with frontend frameworks like React.
 
@@ -136,6 +137,51 @@ Returns an array of all current copy names in insertion order.
 ### `getCopySuffix(): string`
 
 Returns the suffix string currently used when generating copy names.
+
+### `hasCopy(name: string): boolean`
+
+Returns `true` if the specified name exists, `false` otherwise. O(1) lookup.
+
+### `size: number`
+
+Returns the number of current copies.
+
+```ts
+manager.addCopy("Document");
+manager.addCopy("Document");
+console.log(manager.size); // 2
+```
+
+### `clear(): void`
+
+Removes all copies and resets internal state.
+
+```ts
+manager.addCopy("Document");
+manager.clear();
+console.log(manager.getCopies()); // []
+console.log(manager.size); // 0
+```
+
+### `renameCopy(from: string, to: string): string | false`
+
+Renames an existing copy to a new name while preserving its position in the list. Returns the actual new name (may differ from `to` if `to` already exists), or `false` if `from` is not found.
+
+```ts
+manager.addCopy("Document");
+manager.addCopy("Document");
+// ["Document", "Documentのコピー"]
+
+manager.renameCopy("Document", "Report");
+console.log(manager.getCopies()); // ["Report", "Documentのコピー"]
+
+// If the target name already exists, a suffix is appended
+manager.addCopy("File");
+manager.addCopy("File");
+// ["File", "Fileのコピー"]
+const result = manager.renameCopy("File", "Fileのコピー");
+console.log(result); // "Fileのコピーのコピー"
+```
 
 ## License
 
