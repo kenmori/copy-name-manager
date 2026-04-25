@@ -1,5 +1,11 @@
 # copy-name-manager
 
+## 1.2.0
+
+### Minor Changes
+
+- bc305a7: add hasCopy, size, clear, renameCopy methods and fix getCopies
+
 ## 1.1.0
 
 ### Minor Changes
