@@ -4,13 +4,12 @@
 
 ## Features
 
-- Automatically generates unique copy names in the format `name`, `nameのコピー`, `nameのコピー2`, etc.
+- Automatically generates unique copy names in the format `name`, `nameのコピー`, `nameのコピー(2)`, etc.
 - Handles deletion of copies and reuses deleted copy numbers when new copies are added.
+- Supports custom copy suffixes.
 - Provides easy integration with frontend frameworks like React.
 
 ## Installation
-
-You can install the library via npm:
 
 ```bash
 npm install @kenmori/copy-name-manager
@@ -20,51 +19,69 @@ npm install @kenmori/copy-name-manager
 
 ### Basic Example
 
-Here is how you can use CopyNameManager in a JavaScript/TypeScript project:
+```ts
+import { CopyNameManager } from "@kenmori/copy-name-manager";
+
+const manager = new CopyNameManager();
+
+const first = manager.addCopy("Document");
+console.log(first); // "Document"
+
+const second = manager.addCopy("Document");
+console.log(second); // "Documentのコピー"
+
+const third = manager.addCopy("Document");
+console.log(third); // "Documentのコピー(2)"
+
+manager.removeCopy("Documentのコピー");
+console.log(manager.getCopies()); // ["Document", "Documentのコピー(2)"]
+
+const reused = manager.addCopy("Document");
+console.log(reused); // "Documentのコピー"
+```
+
+### Initial Names
+
+You can pre-seed the manager with existing names:
 
 ```ts
-import { CopyNameManager } from "copy-name-manager";
+const manager = new CopyNameManager(["Document", "Document", "Document"]);
+console.log(manager.getCopies());
+// ["Document", "Documentのコピー", "Documentのコピー(2)"]
+```
 
-const copyNameManager = new CopyNameManager();
+### Custom Suffix
 
-const firstCopy = copyNameManager.addCopy("Document");
-console.log(firstCopy); // Output: "Document"
+```ts
+const manager = new CopyNameManager([], " copy");
 
-const secondCopy = copyNameManager.addCopy("Document");
-console.log(secondCopy); // Output: "Documentのコピー"
+manager.addCopy("Document");
+manager.addCopy("Document");
+manager.addCopy("Document");
+console.log(manager.getCopies());
+// ["Document", "Document copy", "Document copy(2)"]
 
-const thirdCopy = copyNameManager.addCopy("Document");
-console.log(thirdCopy); // Output: "Documentのコピー2"
-
-// Removing a copy
-copyNameManager.removeCopy("Documentのコピー");
-console.log(copyNameManager.getCopies()); // Output: ["Document", "Documentのコピー2"]
-
-// Adding a new copy after deletion
-const newCopy = copyNameManager.addCopy("Document");
-console.log(newCopy); // Output: "Documentのコピー"
+console.log(manager.getCopySuffix()); // " copy"
 ```
 
 ### React Example
 
-CopyNameManager can be easily integrated into React applications. Below is an example of how to use it:
-
 ```tsx
-import React, { useState } from "react";
-import { CopyNameManager } from "copy-name-manager";
+import React, { useRef, useState } from "react";
+import { CopyNameManager } from "@kenmori/copy-name-manager";
 
 const CopyNameManagerComponent = () => {
-  const copyNameManager = new CopyNameManager();
+  const managerRef = useRef(new CopyNameManager());
   const [copies, setCopies] = useState<string[]>([]);
 
   const handleAddCopy = () => {
-    const newCopy = copyNameManager.addCopy("Document");
-    setCopies([...copyNameManager.getCopies()]);
+    managerRef.current.addCopy("Document");
+    setCopies([...managerRef.current.getCopies()]);
   };
 
   const handleRemoveCopy = (name: string) => {
-    copyNameManager.removeCopy(name);
-    setCopies([...copyNameManager.getCopies()]);
+    managerRef.current.removeCopy(name);
+    setCopies([...managerRef.current.getCopies()]);
   };
 
   return (
@@ -86,25 +103,39 @@ export default CopyNameManagerComponent;
 
 ## Visualization
 
-To better understand how CopyNameManager works, here's a visual example:
-
 <img src="https://kenjimorita.jp/wp-content/uploads/2024/11/dev.gif" alt="" width="1101" height="718" class="size-full wp-image-26085" />
 
 - [stackblitz](https://stackblitz.com/edit/vitejs-vite-fu6pe5?embed=1&file=package.json&view=preview)
 
 ## API
 
-`addCopy(name: string): string`
+### `new CopyNameManager(initialNames?, copySuffix?)`
+
+| Parameter      | Type       | Default      | Description                                       |
+| -------------- | ---------- | ------------ | ------------------------------------------------- |
+| `initialNames` | `string[]` | `[]`         | Pre-existing names to initialize the manager with |
+| `copySuffix`   | `string`   | `"のコピー"` | Suffix appended when generating copy names        |
+
+### `addCopy(name: string): string`
 
 Adds a new copy with a unique name based on the given name. Returns the generated copy name.
 
-`removeCopy(name: string): boolean`
+- First occurrence: returns `name` as-is
+- Second occurrence: returns `name + copySuffix`
+- Third and beyond: returns `name + copySuffix + (N)` where N starts at 2
+- Deleted numbers are reused from the smallest available
 
-Removes the specified copy. Returns true if the copy was successfully removed, otherwise returns false.
+### `removeCopy(name: string): boolean`
 
-`getCopies(): string[]`
+Removes the specified copy by name. Returns `true` if removed, `false` if not found. Freed numbers are available for reuse on the next `addCopy`.
 
-Returns an array of all the current copies.
+### `getCopies(): string[]`
+
+Returns an array of all current copy names in insertion order.
+
+### `getCopySuffix(): string`
+
+Returns the suffix string currently used when generating copy names.
 
 ## License
 
