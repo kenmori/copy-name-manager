@@ -278,4 +278,137 @@ describe("CopyNameManager", () => {
       expect(copies[copies.length - 1]).toBe(copyName);
     });
   });
+
+  describe("getCopies の不変性", () => {
+    it("戻り値を変更しても内部状態に影響しない", () => {
+      copyNameManager.addCopy("Document");
+      const copies = copyNameManager.getCopies();
+      copies.push("外部から追加");
+      expect(copyNameManager.getCopies()).toEqual(["Document"]);
+      expect(copyNameManager.size).toBe(1);
+    });
+  });
+
+  describe("removeCopy のベース名削除バグ修正", () => {
+    it("ベース名を削除してもコピーの番号追跡が壊れない", () => {
+      copyNameManager.addCopy("Document");
+      copyNameManager.addCopy("Document");
+      copyNameManager.addCopy("Document");
+      // ["Document", "Documentのコピー", "Documentのコピー(2)"]
+      copyNameManager.removeCopy("Document");
+      // copyNumbers["Document"] は {1, 2} のまま保持されるべき
+      copyNameManager.addCopy("Document");
+      // 次のaddCopyは "Documentのコピー" を試みるが既存のため "Documentのコピー(3)" になる
+      const newCopy = copyNameManager.addCopy("Document");
+      expect(copyNameManager.getCopies()).toContain("Documentのコピー");
+      expect(copyNameManager.getCopies()).toContain("Documentのコピー(2)");
+      expect(newCopy).not.toBe("Documentのコピー");
+      expect(newCopy).not.toBe("Documentのコピー(2)");
+    });
+  });
+
+  describe("hasCopy", () => {
+    it("存在するコピーに対して true を返す", () => {
+      copyNameManager.addCopy("Document");
+      expect(copyNameManager.hasCopy("Document")).toBe(true);
+    });
+
+    it("存在しないコピーに対して false を返す", () => {
+      expect(copyNameManager.hasCopy("Document")).toBe(false);
+    });
+
+    it("削除後は false を返す", () => {
+      copyNameManager.addCopy("Document");
+      copyNameManager.removeCopy("Document");
+      expect(copyNameManager.hasCopy("Document")).toBe(false);
+    });
+  });
+
+  describe("size", () => {
+    it("初期状態は 0 を返す", () => {
+      expect(copyNameManager.size).toBe(0);
+    });
+
+    it("addCopy のたびに増加する", () => {
+      copyNameManager.addCopy("Document");
+      expect(copyNameManager.size).toBe(1);
+      copyNameManager.addCopy("Document");
+      expect(copyNameManager.size).toBe(2);
+    });
+
+    it("removeCopy のたびに減少する", () => {
+      copyNameManager.addCopy("Document");
+      copyNameManager.addCopy("Document");
+      copyNameManager.removeCopy("Document");
+      expect(copyNameManager.size).toBe(1);
+    });
+  });
+
+  describe("clear", () => {
+    it("全てのコピーを削除する", () => {
+      copyNameManager.addCopy("Document");
+      copyNameManager.addCopy("Document");
+      copyNameManager.clear();
+      expect(copyNameManager.getCopies()).toEqual([]);
+      expect(copyNameManager.size).toBe(0);
+    });
+
+    it("clear 後に同じ名前を再追加できる", () => {
+      copyNameManager.addCopy("Document");
+      copyNameManager.addCopy("Document");
+      copyNameManager.clear();
+      const name = copyNameManager.addCopy("Document");
+      expect(name).toBe("Document");
+      expect(copyNameManager.getCopies()).toEqual(["Document"]);
+    });
+  });
+
+  describe("renameCopy", () => {
+    it("存在しない名前を変更しようとすると false を返す", () => {
+      expect(copyNameManager.renameCopy("存在しない", "新しい名前")).toBe(
+        false,
+      );
+    });
+
+    it("コピーを別の名前に変更できる", () => {
+      copyNameManager.addCopy("Document");
+      const result = copyNameManager.renameCopy("Document", "Report");
+      expect(result).toBe("Report");
+      expect(copyNameManager.getCopies()).toEqual(["Report"]);
+    });
+
+    it("変更後も同じ位置を保持する", () => {
+      copyNameManager.addCopy("Document");
+      copyNameManager.addCopy("Document");
+      copyNameManager.addCopy("Document");
+      // ["Document", "Documentのコピー", "Documentのコピー(2)"]
+      copyNameManager.renameCopy("Documentのコピー", "Report");
+      expect(copyNameManager.getCopies()[1]).toBe("Report");
+    });
+
+    it("変更先の名前が既に存在する場合はサフィックスを付与する", () => {
+      copyNameManager.addCopy("Document");
+      copyNameManager.addCopy("Report");
+      const result = copyNameManager.renameCopy("Document", "Report");
+      expect(result).toBe("Reportのコピー");
+      expect(copyNameManager.getCopies()).toEqual(["Reportのコピー", "Report"]);
+    });
+
+    it("同じ名前への変更はそのまま返す", () => {
+      copyNameManager.addCopy("Document");
+      const result = copyNameManager.renameCopy("Document", "Document");
+      expect(result).toBe("Document");
+      expect(copyNameManager.getCopies()).toEqual(["Document"]);
+    });
+
+    it("変更後に元の名前でコピーを追加できる", () => {
+      copyNameManager.addCopy("Document");
+      copyNameManager.addCopy("Document");
+      // ["Document", "Documentのコピー"]
+      copyNameManager.renameCopy("Document", "Report");
+      // ["Report", "Documentのコピー"]
+      const name = copyNameManager.addCopy("Document");
+      expect(name).toBe("Document");
+    });
+  });
 });

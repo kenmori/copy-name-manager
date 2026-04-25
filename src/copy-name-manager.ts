@@ -1,38 +1,43 @@
 class CopyNameManager {
   private copyNumbers: Record<string, Set<number>>;
   private copies: string[];
+  private copiesSet: Set<string>;
   private copySuffix: string;
+  private escapedSuffix: string;
 
   constructor(initialNames: string[] = [], copySuffix = "のコピー") {
     this.copyNumbers = {};
     this.copies = [];
+    this.copiesSet = new Set();
     this.copySuffix = copySuffix;
+    this.escapedSuffix = this.escapeRegExp(copySuffix);
 
     initialNames.forEach((name) => {
       this.addCopy(name);
     });
   }
-  private escapeRegExp(string: string) {
-    return string.replace(/[.*+\-?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
+
+  private escapeRegExp(string: string): string {
+    return string.replace(/[.*+\-?^${}()|[\]\\]/g, "\\$&");
   }
 
-  addCopy(name: string): string {
-    const escapedSuffix = this.escapeRegExp(this.copySuffix);
-    const baseName = name.replace(new RegExp(`${escapedSuffix}(\\d*)$`), "");
+  private generateUniqueName(name: string): string {
+    const baseName = name.replace(
+      new RegExp(`${this.escapedSuffix}(\\d*)$`),
+      "",
+    );
     if (!this.copyNumbers[baseName]) {
       this.copyNumbers[baseName] = new Set<number>();
     }
 
     let newCopyName: string;
 
-    if (this.copies.includes(name)) {
-      // 名前が既に存在する場合、「のコピー」形式で新しいコピー名を作成
+    if (this.copiesSet.has(name)) {
       if (!this.copyNumbers[name]?.has(1)) {
         newCopyName = `${name}${this.copySuffix}`;
-        this.copyNumbers[name]?.add(1); // 最初のコピーを予約
+        this.copyNumbers[name]?.add(1);
       } else {
-        // 「のコピー」が存在する場合、次の番号付きコピーを作成
-        let nextCopyNumber = 2; // (2) からスタート
+        let nextCopyNumber = 2;
         while (this.copyNumbers[name]?.has(nextCopyNumber)) {
           nextCopyNumber++;
         }
@@ -40,54 +45,84 @@ class CopyNameManager {
         this.copyNumbers[name]?.add(nextCopyNumber);
       }
     } else {
-      // 名前がまだ使われていない場合、そのままの名前を使用
       newCopyName = name;
     }
 
-    // 新しいコピー名が既存のコピーと競合していないか確認
-    // Check if the new copy name conflicts with existing copies
     let copyNumber = 1;
-    while (this.copies.includes(newCopyName)) {
+    while (this.copiesSet.has(newCopyName)) {
       copyNumber++;
       newCopyName = `${name}${this.copySuffix}(${copyNumber})`;
     }
 
+    return newCopyName;
+  }
+
+  private untrackCopy(name: string): void {
+    const baseName = name
+      .replace(new RegExp(`${this.escapedSuffix}\\(\\d+\\)$`), "")
+      .replace(new RegExp(`${this.escapedSuffix}$`), "");
+
+    if (name === baseName) return;
+
+    const match = name.match(new RegExp(`${this.escapedSuffix}\\((\\d+)\\)$`));
+    const copyNumber = match ? parseInt(match[1] || "", 10) : 1;
+
+    this.copyNumbers[baseName]?.delete(copyNumber);
+  }
+
+  addCopy(name: string): string {
+    const newCopyName = this.generateUniqueName(name);
     this.copies.push(newCopyName);
+    this.copiesSet.add(newCopyName);
     return newCopyName;
   }
 
   removeCopy(name: string): boolean {
-    const index = this.copies.findIndex((copy) => copy === name);
-    if (index > -1) {
-      const [removedCopy] = this.copies.splice(index, 1);
+    const index = this.copies.indexOf(name);
+    if (index === -1) return false;
 
-      if (!removedCopy) {
-        throw new Error("removedCopy is empty");
-      }
+    this.copies.splice(index, 1);
+    this.copiesSet.delete(name);
+    this.untrackCopy(name);
 
-      const escapedSuffix = this.escapeRegExp(this.copySuffix);
-      const baseName = removedCopy
-        .replace(new RegExp(`${escapedSuffix}\\(\\d+\\)$`), "")
-        .replace(new RegExp(`${escapedSuffix}$`), "");
-      const match = removedCopy.match(
-        new RegExp(`${escapedSuffix}\\((\\d+)\\)$`),
-      );
-      const copyNumber = match ? parseInt(match[1] || "", 10) : 1;
+    return true;
+  }
 
-      if (this.copyNumbers[baseName]) {
-        this.copyNumbers[baseName]?.delete(copyNumber);
-      }
+  renameCopy(from: string, to: string): string | false {
+    const index = this.copies.indexOf(from);
+    if (index === -1) return false;
 
-      return true;
-    }
-    return false;
+    this.copiesSet.delete(from);
+    this.untrackCopy(from);
+
+    const newName = this.generateUniqueName(to);
+
+    this.copies[index] = newName;
+    this.copiesSet.add(newName);
+
+    return newName;
   }
 
   getCopies(): string[] {
-    return this.copies;
+    return [...this.copies];
   }
+
   getCopySuffix(): string {
     return this.copySuffix;
+  }
+
+  hasCopy(name: string): boolean {
+    return this.copiesSet.has(name);
+  }
+
+  get size(): number {
+    return this.copies.length;
+  }
+
+  clear(): void {
+    this.copies = [];
+    this.copiesSet = new Set();
+    this.copyNumbers = {};
   }
 }
 
