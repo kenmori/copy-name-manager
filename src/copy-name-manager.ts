@@ -70,9 +70,38 @@ class CopyNameManager {
     this.copyNumbers[baseName]?.delete(copyNumber);
   }
 
+  private getCopyNumber(name: string, baseName: string): number {
+    if (name === baseName) return 0;
+    const match = name.match(new RegExp(`${this.escapedSuffix}\\((\\d+)\\)$`));
+    return match ? parseInt(match[1]!, 10) : 1;
+  }
+
+  private findInsertIndex(newCopyName: string): number {
+    const baseName = newCopyName
+      .replace(new RegExp(`${this.escapedSuffix}\\(\\d+\\)$`), "")
+      .replace(new RegExp(`${this.escapedSuffix}$`), "");
+
+    if (newCopyName === baseName) return -1;
+
+    const newNumber = this.getCopyNumber(newCopyName, baseName);
+
+    return this.copies.findIndex((copy) => {
+      const copyBase = copy
+        .replace(new RegExp(`${this.escapedSuffix}\\(\\d+\\)$`), "")
+        .replace(new RegExp(`${this.escapedSuffix}$`), "");
+      if (copyBase !== baseName) return false;
+      return this.getCopyNumber(copy, copyBase) > newNumber;
+    });
+  }
+
   addCopy(name: string): string {
     const newCopyName = this.generateUniqueName(name);
-    this.copies.push(newCopyName);
+    const insertIndex = this.findInsertIndex(newCopyName);
+    if (insertIndex === -1) {
+      this.copies.push(newCopyName);
+    } else {
+      this.copies.splice(insertIndex, 0, newCopyName);
+    }
     this.copiesSet.add(newCopyName);
     return newCopyName;
   }

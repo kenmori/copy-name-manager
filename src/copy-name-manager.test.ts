@@ -63,8 +63,8 @@ describe("CopyNameManager", () => {
     expect(copyName).toBe("Documentのコピー");
     expect(copyNameManager.getCopies()).toEqual([
       "Document",
-      "Documentのコピー(2)",
       "Documentのコピー",
+      "Documentのコピー(2)",
     ]);
   });
 
@@ -270,12 +270,11 @@ describe("CopyNameManager", () => {
       expect(copyName).toBe("My Documentのコピー");
     });
 
-    it("addCopyの戻り値とgetCopiesの末尾が一致する", () => {
+    it("addCopyの戻り値はgetCopiesに含まれる", () => {
       copyNameManager.addCopy("Document");
       copyNameManager.addCopy("Document");
       const copyName = copyNameManager.addCopy("Document");
-      const copies = copyNameManager.getCopies();
-      expect(copies[copies.length - 1]).toBe(copyName);
+      expect(copyNameManager.getCopies()).toContain(copyName);
     });
   });
 
