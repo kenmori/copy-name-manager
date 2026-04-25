@@ -70,7 +70,7 @@ class CopyNameManager {
         .replace(new RegExp(`${escapedSuffix}\\(\\d+\\)$`), "")
         .replace(new RegExp(`${escapedSuffix}$`), "");
       const match = removedCopy.match(
-        new RegExp(`${escapedSuffix}\\((\\d+)\\)$`)
+        new RegExp(`${escapedSuffix}\\((\\d+)\\)$`),
       );
       const copyNumber = match ? parseInt(match[1] || "", 10) : 1;
 
